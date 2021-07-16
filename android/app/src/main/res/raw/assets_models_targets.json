@@ -1,0 +1,32 @@
+[
+    {
+        "key": "Daisy",
+        "emoji": "🌼",
+        "idx": 1,
+        "value": 20
+    },
+    {
+        "key": "Dandelion",
+        "emoji": "💮",
+        "idx": 2,
+        "value": 20
+    },
+    {
+        "key": "Rose",
+        "emoji": "🌹",
+        "idx": 3,
+        "value": 20
+    },
+    {
+        "key": "Sunflower",
+        "emoji": "🌻",
+        "idx": 4,
+        "value": 20
+    },
+    {
+        "key": "Tulip",
+        "emoji": "🌷",
+        "idx": 5,
+        "value": 20
+    }
+]
