@@ -80,14 +80,14 @@ export default ({ navigation }) => {
         <View style={{ paddingTop: 20, paddingHorizontal: 20 }}>
           <Button
             icon={<Icon name='folder-upload' color='#ffffff' type='material-community' />}
-            buttonStyle={{ backgroundColor: '#009900', borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
+            buttonStyle={{ backgroundColor: '#009900', borderRadius: 5, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
             title='Upload Image'
             onPress={uploadImage} />
         </View>
         <View style={{ paddingHorizontal: 20, paddingTop: 10 }}>
           <Button
             icon={<Icon name='camera' color='#ffffff' type='material-community' />}
-            buttonStyle={{ backgroundColor: '#009900', borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
+            buttonStyle={{ backgroundColor: '#009900', borderRadius: 5, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
             title='Take Picture'
             onPress={takePicture} />
         </View>
