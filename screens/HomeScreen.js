@@ -17,14 +17,14 @@ const viewsData = [
   {
     id: 'pastai',
     title: '🍉Pastai🍉',
-    description: 'Watermelon fruits detection app, powered by the powerfull YoloV5 Neural Network',
+    description: 'Watermelon fruits detection & counting',
     imgSource: require('../assets/images/watermelon.png'),
     dest: 'Pastai'
   },
   {
     id: 'whichflower',
     title: '🌹WhichFlower🌻',
-    description: 'Flower species recognition using Image classification ConvNets',
+    description: 'Flower species classification',
     imgSource: require('../assets/images/whichflower.png'),
     dest: 'WhichFlower'
   },
@@ -35,12 +35,11 @@ const MainView = () => (
   <View style={{ marginBottom: 50 }}>
     <Image
       source={require('../assets/images/agro2.jpg')}
-      style={styles.image}
-    // resizeMode='stretch'
+      style={styles.imageMain}
     />
     <Paragraph style={styles.paragraph}>
       Collections of AI-powered Computer Vision Apps, mainly related to agriculture.
-      All models are embedded so that the app can function without need of internet connection.
+      All models are embedded so that the App doesn't require internet connection.
     </Paragraph>
   </View>
 )
@@ -52,27 +51,20 @@ const DetailView = (props) => {
         <Card.Title>{props.item.title}</Card.Title>
         <Card.Divider />
         <Card.Image source={props.item.imgSource}
-          style={{
-            // width: 200,
-            height: 200,
-            resizeMode: 'stretch',
-            marginHorizontal: 20
-          }}
-        >
+          style={styles.imageDetail} >
         </Card.Image>
         <Text style={{ marginVertical: 5, textAlign: 'center' }}>
           {props.item.description}
         </Text>
         <Button
           icon={<Icon name='code' color='#ffffff' />}
-          buttonStyle={{ backgroundColor: '#009900', borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
+          buttonStyle={styles.button}
           title='Go to App'
           onPress={() => props.navigation.navigate(props.item.dest)} />
       </Card>
     </TouchableRipple>
   )
 }
-
 
 const renderItem = ({ item }, navigation) => (
   item.id === 'main' ?
@@ -81,14 +73,10 @@ const renderItem = ({ item }, navigation) => (
     <DetailView item={item} navigation={navigation} />
 )
 
-const itemSeparator = () => <View style={{
-  height: 1,
-  width: "100%",
-  backgroundColor: '#b3daff',
-  marginVertical: 5
-}} />
+const itemSeparator = () => <View style={styles.itemSeparator} />
 
 export default ({ navigation }) => {
+
   return (
     <SafeAreaView
       style={{
@@ -108,13 +96,19 @@ export default ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-  image: {
+  imageMain: {
     height: 250,
     width: '100%',
     marginTop: 10,
     marginBottom: 5,
     borderRadius: 15,
     resizeMode: 'stretch'
+  },
+  imageDetail: {
+    // width: 200,
+    height: 200,
+    resizeMode: 'stretch',
+    marginHorizontal: 20
   },
   paragraph: {
     padding: 10,
@@ -128,5 +122,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#b3ffb3',
     marginBottom: 10,
     marginHorizontal: 20,
+  },
+  itemSeparator: {
+    height: 1,
+    width: "100%",
+    backgroundColor: '#b3daff',
+    marginVertical: 5
+  },
+  button: {
+    backgroundColor: '#009900',
+    borderRadius: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    marginBottom: 0
   }
 })

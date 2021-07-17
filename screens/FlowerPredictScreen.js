@@ -1,16 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { View } from 'react-native'
+import React, { useState, useContext } from 'react'
+import { View, StyleSheet } from 'react-native'
 import { Image, Icon, Text, Button } from 'react-native-elements'
-import * as tf from '@tensorflow/tfjs'
-import '@tensorflow/tfjs-react-native'
-import { bundleResourceIO, decodeJpeg } from '@tensorflow/tfjs-react-native'
+import { decodeJpeg } from '@tensorflow/tfjs-react-native'
 import { VictoryBar, VictoryChart, VictoryTheme, VictoryAxis, VictoryLabel } from 'victory-native'
-import AnimatedLoader from "react-native-animated-loader"
 import targets from '../assets/models/targets.json'
-
-
-const modelJson = require('../assets/models/convnet/model.json')
-const modelWeights = require('../assets/models/convnet/group1-shard1of1.bin')
+import { ModelsContext } from '../utils/ModelsContext'
 
 
 const ChartComponent = ({ data }) => {
@@ -70,37 +64,28 @@ const ChartComponent = ({ data }) => {
 
 export default ({ route, navigation }) => {
 
-  const [isTfReady, setIsTfReady] = useState(false)
-  const [model, setModel] = useState(null)
   const [predictions, setPredictions] = useState(null)
   const [hasPredicted, setHasPredicted] = useState(false)
   const { data } = route.params
   const inputSize = [224, 224]
 
-  useEffect(() => {
-
-    const loadModel = async () => {
-      await tf.ready()
-      const tf_model = await tf.loadLayersModel(bundleResourceIO(modelJson, modelWeights))
-      setModel(tf_model)
-      setIsTfReady(true)
-    }
-    loadModel()
-
-  }, [])
+  const { tf, whichFlowerModel } = useContext(ModelsContext)
 
   const predict = () => {
-    if (isTfReady && !hasPredicted) {
+
+    if (!hasPredicted) {
+
       const bufferData = Buffer.from(data.base64, 'base64')
       const imageData = new Uint8Array(bufferData)
       const imageTensor = decodeJpeg(imageData)
       const imageTensorResized = tf.image.resizeBilinear(imageTensor, inputSize,)
         .expandDims(0)
         .div(255.0)
-      const result = model.predict(imageTensorResized).mul(100).round().dataSync()
+      const result = whichFlowerModel.predict(imageTensorResized).mul(100).round().dataSync()
       const resultData = targets.map((item, i) => ({ ...item, value: result[i] }))
+
       setPredictions(resultData)
-      setHasPredicted(true)
+      setHasPredicted(!hasPredicted)
     }
   }
 
@@ -119,54 +104,22 @@ export default ({ route, navigation }) => {
       </View>
       <View style={{ flex: imagePredsFlex.preds, paddingBottom: 100, alignItems: 'center' }}>
         {
-          (model === null) ?
-            <AnimatedLoader
-              visible={true}
-              overlayColor="rgba(255,255,255,0.75)"
-              source={require("../assets/images/7597-loader-animation.json")}
-              animationStyle={{ width: 100, height: 100 }}
-              speed={1.5}
-            ><Text>Exploring universe, loading model ...</Text></AnimatedLoader>
+          (hasPredicted && predictions) ?
+            <ChartComponent data={predictions} />
             :
-            (hasPredicted && predictions) ?
-              <ChartComponent data={predictions} />
-              :
-              <Text style={{ fontSize: 14, fontWeight: 'bold' }}>Hit predict button to see magic</Text>
-
+            <Text style={{ fontSize: 14, fontWeight: 'bold', paddingTop: 50 }}>Hit predict button {'&'} let magic happen!</Text>
         }
       </View>
-      <View style={{
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 50,
-        marginTop: 0,
-        paddingTop: 30,
-        paddingBottom: 0,
-        marginBottom: 0
-      }}
+      <View style={styles.buttonsContainer}
       >
         <Button
           icon={<Icon name='arrow-left-bold-circle' color='#ffffff' type='material-community' />}
-          buttonStyle={{
-            backgroundColor: '#009900',
-            borderRadius: 5,
-            // marginLeft: 0,
-            // marginRight: 0,
-            paddingBottom: 5,
-          }}
+          buttonStyle={styles.buttonStyle}
           title='Upload Another'
           onPress={() => navigation.navigate('WhichFlower')} />
         <Button
           icon={<Icon name='arrow-right-drop-circle' color='#ffffff' type='material-community' />}
-          buttonStyle={{
-            backgroundColor: '#009900',
-            borderRadius: 5,
-            // marginLeft: 0,
-            // marginRight: 0,
-            paddingBottom: 5,
-          }}
+          buttonStyle={styles.buttonStyle}
           title='Predict'
           onPress={() => predict()} />
       </View>
@@ -174,3 +127,24 @@ export default ({ route, navigation }) => {
 
   )
 }
+
+const styles = StyleSheet.create({
+  buttonStyle: {
+    backgroundColor: '#009900',
+    borderRadius: 5,
+    paddingBottom: 5,
+    height: 35,
+    width: 150
+  },
+  buttonsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    marginTop: 0,
+    paddingTop: 30,
+    paddingBottom: 0,
+    marginBottom: 10
+  }
+})
