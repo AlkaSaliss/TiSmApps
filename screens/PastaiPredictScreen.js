@@ -24,7 +24,7 @@ export default ({ route, navigation }) => {
     arr.reduce((rows, key, index) => (index % width == 0 ? rows.push([key])
       : rows[rows.length - 1].push(key)) && rows, [])
 
-  const predict = () => {
+  const predict = async () => {
     if (!hasPredicted) {
       const bufferData = Buffer.from(data.base64, 'base64')
       const imageData = new Uint8Array(bufferData)
@@ -33,7 +33,7 @@ export default ({ route, navigation }) => {
         .expandDims(0)
         .div(255.0)
       const result = pastaiModel.predict(imageTensorResized).squeeze()
-      const bboxes = nonMaxSuppressionYolo(tf, result, iouThreshold, scoreThreshold).mul(modelInputSize).dataSync()
+      const bboxes = (await nonMaxSuppressionYolo(tf, result, iouThreshold, scoreThreshold)).mul(modelInputSize).dataSync()
       const nCoords = 4
       const bboxes_reshaped = bboxes.length ?
         toMatrix(bboxes, nCoords) : []
